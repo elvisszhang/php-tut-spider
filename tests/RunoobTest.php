@@ -7,7 +7,8 @@ final class RunoobTest  extends TestCase
 {
     public function testGetIndexes() {
        $runoob = new Runoob;
-	   $re = $runoob->getIndexes('/html/html-tutorial.html');
+	   //$re = $runoob->getIndexes('/html/html-tutorial.html');
+	   $re = $runoob->getContent('/html/html-tutorial.html');
 	   var_dump($re);
     }
 }

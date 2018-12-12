@@ -9,6 +9,8 @@ class Runoob {
 	//解析教程目录
     public function getIndexes($uri) {
 		$html = $this->getHtml($uri);
+		if(!$html)
+			return false;
 		//获取目录栏目HTML
 		$pos1 = strpos($html,'<div class="design" id="leftcolumn">',0);
 		if(!$pos1)
@@ -24,8 +26,7 @@ class Runoob {
 		$indexes = array();
 		$major = "default";
 		$indexes[$major] = array();
-		$callback = function ($element) use ($indexes,$major) {
-			var_dump($indexes);
+		$callback = function ($element) use (&$indexes,&$major) {
 			if ($element->tag=='h2'){
 				$major = $element->plaintext;
 				$indexes[$major] = array();
@@ -40,7 +41,20 @@ class Runoob {
     }
 	//获取正文内容
 	public function getContent($uri) {
-		
+		$html = $this->getHtml($uri);
+		if(!$html)
+			return false;		
+		//解析内容栏目HTML
+		$content = '';
+		$parser = HtmlDomParser::str_get_html($html);
+		$callback = function ($element) use (&$content) {
+			if ($element->tag=='div' && $element->class =="article-intro" && !$content){
+				$content = $element->innertext;
+			}
+		};
+		$parser->set_callback($callback);
+		$parser->save();
+		return $content;
 	}
 	//获取HTML页面
 	public function getHtml($uri){
